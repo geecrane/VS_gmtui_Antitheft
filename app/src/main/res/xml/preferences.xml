@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+        android:key="pref_detection_method"
+        android:title="Detection Method"
+        android:dialogTitle="Select Detection Method"
+        android:entries="@array/my_entries"
+        android:entryValues="@array/my_values"
+        android:defaultValue="0" />
+        <EditTextPreference
+            android:key="pref_accel_sensitivity"
+            android:title="Accelerometer Sensitivity"
+            android:dialogTitle="Accelerometer Sensitivity"
+            android:inputType="number"
+            android:defaultValue="10" />
+        <EditTextPreference
+            android:key="pref_rotation_sensitivity"
+            android:title="Rotation Sensitivity"
+            android:dialogTitle="Rotation Sensitivity"
+            android:inputType="numberDecimal"
+            android:defaultValue="0.5" />
+        <EditTextPreference
+            android:key="pref_delay"
+            android:title="Alarm Delay"
+            android:dialogTitle="Delay (seconds)"
+            android:inputType="number"
+            android:defaultValue="0" />
+</PreferenceScreen>
+
