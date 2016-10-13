@@ -34,7 +34,7 @@ public class AntiTheftService extends Service implements AlarmCallback {
     private int detection;
     private Looper mServiceLooper;
     private ServiceHandler mServiceHandler;
-
+    private HandlerThread thread;
 
     private final class ServiceHandler extends Handler {
         public ServiceHandler(Looper looper) {
@@ -64,7 +64,7 @@ public class AntiTheftService extends Service implements AlarmCallback {
     @Override
     public void onCreate() {
 
-        HandlerThread thread = new HandlerThread("ServiceStartArguments",
+        thread = new HandlerThread("ServiceStartArguments",
                 Process.THREAD_PRIORITY_BACKGROUND);
         thread.start();
 
@@ -105,6 +105,7 @@ public class AntiTheftService extends Service implements AlarmCallback {
         if (mp.isPlaying()) {
             mp.stop();
         }
+        thread.interrupt();
         Toast.makeText(this, "service done", Toast.LENGTH_SHORT).show();
         super.onDestroy();
     }

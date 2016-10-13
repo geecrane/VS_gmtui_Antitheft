@@ -1,5 +1,6 @@
 package ch.ethz.inf.vs.a1.gmtui.antitheft;
 
+import android.preference.Preference;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -16,4 +17,5 @@ public class SettingsActivity extends AppCompatActivity {
                 .replace(android.R.id.content, new SettingsFragment())
                 .commit();
     }
+
 }

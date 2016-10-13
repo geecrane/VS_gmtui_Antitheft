@@ -4,6 +4,8 @@ package ch.ethz.inf.vs.a1.gmtui.antitheft;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.PersistableBundle;
+import android.preference.EditTextPreference;
+import android.preference.Preference;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -14,7 +16,9 @@ import android.view.View;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.Map;
+
+public class MainActivity extends AppCompatActivity  {
     private final String TOGGLE_PREF = "toggle_state";
     private Intent antiTheftService;
     public static Boolean locked;
@@ -25,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = getPreferences(this.MODE_PRIVATE).edit();
         editor.putBoolean(TOGGLE_PREF, locked);
         editor.apply();
+
         super.onStop();
     }
 
@@ -33,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         ToggleButton tb = (ToggleButton) findViewById(R.id.toggleButton);
         tb.setChecked(getPreferences(this.MODE_PRIVATE).getBoolean(TOGGLE_PREF,false));
         locked = tb.isChecked();
+
         super.onStart();
     }
 
@@ -78,4 +84,5 @@ public class MainActivity extends AppCompatActivity {
             stopService(antiTheftService);
         }
     }
+
 }
