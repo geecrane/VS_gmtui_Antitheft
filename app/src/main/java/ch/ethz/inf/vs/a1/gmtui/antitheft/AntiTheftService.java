@@ -3,7 +3,10 @@ package ch.ethz.inf.vs.a1.gmtui.antitheft;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
@@ -15,8 +18,8 @@ import android.os.Looper;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v7.app.NotificationCompat;
-import android.widget.Toast;
 import android.os.Process;
+
 
 import ch.ethz.inf.vs.a1.gmtui.antitheft.movement_detector.AbstractMovementDetector;
 import ch.ethz.inf.vs.a1.gmtui.antitheft.movement_detector.RotationMovementDetector;
@@ -35,6 +38,7 @@ public class AntiTheftService extends Service implements AlarmCallback {
     private Looper mServiceLooper;
     private ServiceHandler mServiceHandler;
     private HandlerThread thread;
+    public static boolean running = false;
 
     private final class ServiceHandler extends Handler {
         public ServiceHandler(Looper looper) {
@@ -54,16 +58,23 @@ public class AntiTheftService extends Service implements AlarmCallback {
             //stopSelf(msg.arg1);
         }
     }
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
 
-        return START_STICKY;
-    }
+    private IntentFilter filter = new IntentFilter(Intent.ACTION_USER_PRESENT);
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)) {
+                stopSelf();
+                running =false;
+                MainActivity.tb.setChecked(running);
+
+            }
+        }
+    };
 
     @Override
     public void onCreate() {
-
+        running = true;
         thread = new HandlerThread("ServiceStartArguments",
                 Process.THREAD_PRIORITY_BACKGROUND);
         thread.start();
@@ -89,6 +100,7 @@ public class AntiTheftService extends Service implements AlarmCallback {
         }
 
         sensorMgr.registerListener(detector, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+        registerReceiver(receiver, filter);
 
         mp = MediaPlayer.create(this, R.raw.woop);
         mp.setLooping(true);
@@ -106,7 +118,8 @@ public class AntiTheftService extends Service implements AlarmCallback {
             mp.stop();
         }
         thread.interrupt();
-        Toast.makeText(this, "service done", Toast.LENGTH_SHORT).show();
+        running = false;
+        unregisterReceiver(receiver);
         super.onDestroy();
     }
 

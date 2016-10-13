@@ -2,13 +2,9 @@ package ch.ethz.inf.vs.a1.gmtui.antitheft;
 
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.PersistableBundle;
-import android.preference.EditTextPreference;
-import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,27 +15,13 @@ import android.widget.ToggleButton;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity  {
-    private final String TOGGLE_PREF = "toggle_state";
+    public static ToggleButton tb;
     private Intent antiTheftService;
-    public static Boolean locked;
-
-    @Override
-    protected void onStop() {
-
-        SharedPreferences.Editor editor = getPreferences(this.MODE_PRIVATE).edit();
-        editor.putBoolean(TOGGLE_PREF, locked);
-        editor.apply();
-
-        super.onStop();
-    }
 
     @Override
     protected void onStart() {
-        ToggleButton tb = (ToggleButton) findViewById(R.id.toggleButton);
-        tb.setChecked(getPreferences(this.MODE_PRIVATE).getBoolean(TOGGLE_PREF,false));
-        locked = tb.isChecked();
-
         super.onStart();
+        tb.setChecked(AntiTheftService.running);
     }
 
     @Override
@@ -47,9 +29,9 @@ public class MainActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         antiTheftService = new Intent(this, AntiTheftService.class);
-
-
+        tb = (ToggleButton) findViewById(R.id.toggleButton);
     }
 
 
@@ -73,14 +55,9 @@ public class MainActivity extends AppCompatActivity  {
         return true;
     }
     public void onClickLock(View v){
-        ToggleButton tb = (ToggleButton) v;
-        locked = tb.isChecked();
-        if(locked){
-            Toast.makeText(this, "Locked", Toast.LENGTH_SHORT).show();
+        if(tb.isChecked()){
             startService(antiTheftService);
-
         }else {
-            Toast.makeText(this, "Unlocked", Toast.LENGTH_SHORT).show();
             stopService(antiTheftService);
         }
     }

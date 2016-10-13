@@ -29,14 +29,13 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
             Preference pref = findPreference(key);
             if(pref != null)
                 pref.setOnPreferenceChangeListener(this);
-
         }
     }
 
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
-        if(MainActivity.locked){
+        if(AntiTheftService.running){
             Toast.makeText(getActivity(), "Settings NOT saved!", Toast.LENGTH_SHORT).show();
             return false;
         }
